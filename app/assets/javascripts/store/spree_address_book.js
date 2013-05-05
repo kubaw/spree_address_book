@@ -2,11 +2,12 @@
 
 (function($) {
   $(document).ready(function(){
+    var cha = $('.checkout_addresses');
     if ($(".select_address").length) {
       $('input#order_use_billing').unbind("click");
-      $(".inner").hide();
-      $(".inner input").prop("disabled", true);
-      $(".inner select").prop("disabled", true);
+      $(".inner",cha).hide();
+      $(".inner input",cha).prop("disabled", true);
+      $(".inner select",cha).prop("disabled", true);
       if ($('input#order_use_billing').is(':checked')) {
         $("#shipping .select_address").hide();
       }
@@ -27,7 +28,6 @@
         if ($("input[name='order[bill_address_id]']:checked").val() == '0') {
           show_address_form('billing');
         } else {
-          hide_address_form('billing');
         }
       });
 
@@ -42,14 +42,16 @@
   });
   
   function hide_address_form(address_type){
-    $("#" + address_type + " .inner").hide();
-    $("#" + address_type + " .inner input").prop("disabled", true);
-    $("#" + address_type + " .inner select").prop("disabled", true);
+    var cha = $('.checkout_addresses');
+    $("#" + address_type + " .inner",cha).hide();
+    $("#" + address_type + " .inner input",cha).prop("disabled", true);
+    $("#" + address_type + " .inner select",cha).prop("disabled", true);
   }
   
   function show_address_form(address_type){
-    $("#" + address_type + " .inner").show();
-    $("#" + address_type + " .inner input").prop("disabled", false);
-    $("#" + address_type + " .inner select").prop("disabled", false);
+    var cha = $('.checkout_addresses');
+    $("#" + address_type + " .inner",cha).show();
+    $("#" + address_type + " .inner input",cha).prop("disabled", false);
+    $("#" + address_type + " .inner select",cha).prop("disabled", false);
   }
 })(jQuery);
