@@ -43,15 +43,15 @@
   
   function hide_address_form(address_type){
     var cha = $('.checkout_addresses');
-    $("#" + address_type + " .inner",cha).hide();
-    $("#" + address_type + " .inner input",cha).prop("disabled", true);
-    $("#" + address_type + " .inner select",cha).prop("disabled", true);
+    $(".inner",cha).hide();
+    $(".inner input",cha).prop("disabled", true);
+    $(".inner select",cha).prop("disabled", true);
   }
   
   function show_address_form(address_type){
     var cha = $('.checkout_addresses');
-    $("#" + address_type + " .inner",cha).show();
-    $("#" + address_type + " .inner input",cha).prop("disabled", false);
-    $("#" + address_type + " .inner select",cha).prop("disabled", false);
+    $(".inner",cha).show();
+    $(".inner input",cha).prop("disabled", false);
+    $(".inner select",cha).prop("disabled", false);
   }
 })(jQuery);

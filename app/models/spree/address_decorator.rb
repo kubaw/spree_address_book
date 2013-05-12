@@ -1,7 +1,7 @@
 Spree::Address.class_eval do
   belongs_to :user, :class_name => Spree.user_class.to_s
-
-  attr_accessible :user_id, :deleted_at
+  before_validation :create_address1
+  attr_accessible :user_id, :deleted_at, :street, :house_no, :flat_no
 
   def self.required_fields
     validator = Spree::Address.validators.find{|v| v.kind_of?(ActiveModel::Validations::PresenceValidator)}
@@ -29,8 +29,8 @@ Spree::Address.class_eval do
       "#{firstname} #{lastname}",
       "#{address1}",
       "#{address2}",
-      "#{city}, #{state || state_name} #{zipcode}",
-      "#{country}"
+      "#{zipcode} #{city}",
+      "#{state || state_name}, #{country}"
     ].reject(&:empty?).join("<br/>").html_safe
   end
 
@@ -42,4 +42,12 @@ Spree::Address.class_eval do
       update_column :deleted_at, Time.now
     end
   end
+
+  private
+    def create_address1
+      self.address1 = ""
+      self.address1 << self.street unless self.street.blank?
+      self.address1 << " #{self.house_no}" unless self.house_no.blank?
+      self.address1 << "/#{self.flat_no}" unless self.flat_no.blank?
+    end
 end

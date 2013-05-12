@@ -13,29 +13,42 @@ class Spree::AddressesController < Spree::StoreController
 
   def edit
     session["user_return_to"] = request.env['HTTP_REFERER']
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 
   def new
     @address = Spree::Address.default
+    respond_to do |format|
+      format.html { render :new}
+      format.json { render :edit}
+    end
   end
 
   def update
     if @address.editable?
-      if @address.update_attributes(params[:address])
-        flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:address))
-        redirect_back_or_default(account_path)
-      else
-        render :action => "edit"
-      end
+      address_to_edit = @address
+      method = :update_attributes
+      p = params[:address] 
     else
-      new_address = @address.clone
-      new_address.attributes = params[:address]
+      address_to_edit = @address.clone
+      address_to_edit.attributes = params[:address]
       @address.update_attribute(:deleted_at, Time.now)
-      if new_address.save
-        flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:address))
-        redirect_back_or_default(account_path)
+      p = nil
+      method = :save
+    end
+    respond_to do |format|
+      if address_to_edit.send(method,p)
+        format.html do
+          flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:address))
+          redirect_back_or_default(account_path)
+        end
+        format.json {render :json => {:result => :ok, :address => address_to_edit.to_s} }
       else
-        render :action => "edit"
+        format.html {render :action => "edit"}
+        format.json {render :json => {:result => :error } }
       end
     end
   end
@@ -43,11 +56,17 @@ class Spree::AddressesController < Spree::StoreController
   def create
     @address = Spree::Address.new(params[:address])
     @address.user = current_user
-    if @address.save
-      flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:address))
-      redirect_to account_path
-    else
-      render :action => "new"
+    respond_to do |format|
+      if @address.save
+        format.html do
+          flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:address))
+          redirect_to account_path
+        end
+        format.json {render :json => {:result => :ok, :address => @address.to_s, :raw => @address} }
+      else
+        format.html {render :action => "new"}
+        format.json {render :json => {:result => :error } }
+      end
     end
   end
 
