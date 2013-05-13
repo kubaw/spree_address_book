@@ -30,17 +30,15 @@ class Spree::AddressesController < Spree::StoreController
   def update
     if @address.editable?
       address_to_edit = @address
-      method = :update_attributes
-      p = params[:address] 
+      method = Proc.new {address_to_edit.update_attributes(params[:address])}
     else
       address_to_edit = @address.clone
       address_to_edit.attributes = params[:address]
       @address.update_attribute(:deleted_at, Time.now)
-      p = nil
-      method = :save
+      method = Proc.new {address_to_edit.save()}
     end
     respond_to do |format|
-      if address_to_edit.send(method,p)
+      if method.call
         format.html do
           flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:address))
           redirect_back_or_default(account_path)
