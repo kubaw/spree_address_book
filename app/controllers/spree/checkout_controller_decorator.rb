@@ -8,6 +8,7 @@ Spree::CheckoutController.class_eval do
   
   def set_addresses
     return unless params[:order] && (params[:state] == "address" || params[:state] == 'payment')
+    return unless spree_current_user
     if params[:order][:ship_address_id].to_i > 0
       params[:order].delete(:ship_address_attributes)
 
@@ -28,6 +29,7 @@ Spree::CheckoutController.class_eval do
   def normalize_addresses
     return unless (params[:state] == "address" || params[:state] == "payment") && @order.bill_address_id && @order.ship_address_id
     return if (@order.bill_address.id.nil? || @order.ship_address.nil?)
+    return unless spree_current_user
 
     @order.bill_address.reload
     @order.ship_address.reload
@@ -39,8 +41,8 @@ Spree::CheckoutController.class_eval do
       @order.bill_address.destroy
       @order.update_attribute(:bill_address_id, @order.ship_address.id)
     else
-      @order.bill_address.update_attribute(:user_id, current_user.try(:id))
+      @order.bill_address.update_attribute(:user_id, spree_current_user.try(:id))
     end
-    @order.ship_address.update_attribute(:user_id, current_user.try(:id))
+    @order.ship_address.update_attribute(:user_id, spree_current_user.try(:id))
   end
 end
