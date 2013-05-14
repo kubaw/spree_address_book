@@ -2,6 +2,7 @@ class Spree::AddressesController < Spree::StoreController
   helper Spree::AddressesHelper
   rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   load_and_authorize_resource :class => Spree::Address
+  ssl_required
 
   def index
     redirect_to account_path
