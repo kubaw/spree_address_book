@@ -54,7 +54,7 @@ class Spree::AddressesController < Spree::StoreController
 
   def create
     @address = Spree::Address.new(params[:address])
-    @address.user = current_user
+    @address.user = spree_current_user
     respond_to do |format|
       if @address.save
         format.html do
